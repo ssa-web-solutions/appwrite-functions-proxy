@@ -1,0 +1,18 @@
+{
+  "private": false,
+  "name": "appwrite-functions-proxy",
+  "version": "1.0.0",
+  "description": "A proxy that make it easier to consume appwrite functions",
+  "main": "index.js",
+  "repository": "https://github.com/ssa-web-solutions/appwrite-functions-proxy",
+  "author": "Lucas Reis <lucas@mreis.dev>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6"
+  }
+}
