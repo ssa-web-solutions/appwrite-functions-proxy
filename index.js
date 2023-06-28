@@ -41,8 +41,10 @@ const proxy = createProxyMiddleware(filter, proxyOptions)
 
 app.use('/fn/', proxy)
 
+app.get('/', (_, res) => res.json({message: 'The appwrite proxy has successfully been started =)'}))
+
 app.listen(process.env.PORT, process.env.HOST, () => {
-    console.log(`Proxy Started`)
+    console.log(`The appwrite proxy has successfully been started on: ${process.env.HOST}:${process.env.PORT}`)
 })
 
 function getStatusMessage(statusCode, defaultMessage) {
