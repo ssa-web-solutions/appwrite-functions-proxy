@@ -14,7 +14,11 @@ const proxyOptions = {
     },
     selfHandleResponse: true,
     async onProxyReq(proxyReq, request) {
-        const body = JSON.stringify({ data: JSON.stringify(request.body) })
+        let body = { data: JSON.stringify(request.body) }
+        if (request.headers.hasOwnProperty('x-async')) {
+            body.async = true
+        }
+        body = JSON.stringify(body)
         proxyReq.setHeader('X-Appwrite-Key', process.env.APPWRITE_KEY)
         proxyReq.setHeader('X-Appwrite-Project', process.env.APPWRITE_PROJ)
         proxyReq.setHeader('Content-Type', 'application/json')
@@ -30,10 +34,11 @@ const proxyOptions = {
             res.statusCode = response.statusCode
             res.statusMessage = getStatusMessage(response.statusCode, proxyRes.statusMessage)
         }
+        output['appw_$id'] = response.$id
         process.env.EXTRA_PROPS_IN_RESPONSE
             .split(',')
             .forEach(prop => {
-                output[prop] = response[prop]
+                output['appw_'+ prop] = response[prop]
             })
 
         return JSON.stringify(output)
