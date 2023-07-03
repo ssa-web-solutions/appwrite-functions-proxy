@@ -1,4 +1,5 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware')
 require('dotenv').config()
 
@@ -12,10 +13,13 @@ const proxyOptions = {
         return `/v1/functions/${fnName}/executions`
     },
     selfHandleResponse: true,
-    onProxyReq(proxyReq) {
+    async onProxyReq(proxyReq, request) {
+        const body = JSON.stringify({ data: JSON.stringify(request.body) })
         proxyReq.setHeader('X-Appwrite-Key', process.env.APPWRITE_KEY)
         proxyReq.setHeader('X-Appwrite-Project', process.env.APPWRITE_PROJ)
         proxyReq.setHeader('Content-Type', 'application/json')
+        proxyReq.setHeader('Content-Length', body.length);
+        proxyReq.write(body)
     },
     onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, _, res) => {
         const response = JSON.parse(responseBuffer.toString('utf8'))
@@ -39,12 +43,13 @@ const proxyOptions = {
 const filter = (_, req) => req.method == 'POST'
 const proxy = createProxyMiddleware(filter, proxyOptions)
 
+app.use(bodyParser.json())
 app.use('/fn/', proxy)
 
 app.get('/', (_, res) => res.json({message: 'The appwrite proxy has successfully been started =)'}))
 
 app.listen(process.env.PORT, process.env.HOST, () => {
-    console.log(`The appwrite proxy has successfully been started on: ${process.env.HOST}:${process.env.PORT}`)
+    console.info(`The appwrite proxy has successfully been started on: ${process.env.HOST}:${process.env.PORT}`)
 })
 
 function getStatusMessage(statusCode, defaultMessage) {
