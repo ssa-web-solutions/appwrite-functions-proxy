@@ -25,4 +25,12 @@ curl --location 'http://localhost:3000/fn/{your_function_id}' \
 --data '{ "test": "test" }'
 ```
 
+in case you wanna do an async request just add the X-Async header to your request
+
+```sh
+curl --location 'localhost:3000/fn/{your_function_id}' \
+--header 'X-Async;' \
+--header 'Content-Type: application/json' \
+--data '{ "test": "test" }'
+```
 That's all =D
