@@ -14,7 +14,9 @@ const proxyOptions = {
     },
     selfHandleResponse: true,
     async onProxyReq(proxyReq, request) {
-        let body = { data: JSON.stringify(request.body) }
+        let body = { 
+            data: JSON.stringify({ ...request.body, appwReqHeaders: request.headers })
+        }
         if (request.headers.hasOwnProperty('x-async')) {
             body.async = true
         }
@@ -22,7 +24,7 @@ const proxyOptions = {
         proxyReq.setHeader('X-Appwrite-Key', process.env.APPWRITE_KEY)
         proxyReq.setHeader('X-Appwrite-Project', process.env.APPWRITE_PROJ)
         proxyReq.setHeader('Content-Type', 'application/json')
-        proxyReq.setHeader('Content-Length', body.length);
+        proxyReq.setHeader('Content-Length', body.length)
         proxyReq.write(body)
     },
     onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, _, res) => {
