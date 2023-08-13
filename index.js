@@ -9,11 +9,12 @@ const proxyOptions = {
     target: process.env.APPWRITE_URL,
     changeOrigin: true,
     pathRewrite(path) {
-        const fnName = path.replace('/fn', '')
+        const fnName = path.replace('/fn/', '')
         return `/v1/functions/${fnName}/executions`
     },
     selfHandleResponse: true,
     async onProxyReq(proxyReq, request) {
+        console.info('proxying request on endpoint', request.path)
         let body = { 
             data: JSON.stringify({ ...request.body, appwReqHeaders: request.headers })
         }
@@ -32,6 +33,8 @@ const proxyOptions = {
         const output = {
             ...getFunctionResponseData(response)
         }
+        console.info('proxying response')
+        console.info(output)
         if (response.statusCode) {
             res.statusCode = response.statusCode
             res.statusMessage = getStatusMessage(response.statusCode, proxyRes.statusMessage)
