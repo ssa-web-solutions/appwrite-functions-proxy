@@ -25,7 +25,7 @@ const proxyOptions = {
         proxyReq.setHeader('X-Appwrite-Key', process.env.APPWRITE_KEY)
         proxyReq.setHeader('X-Appwrite-Project', process.env.APPWRITE_PROJ)
         proxyReq.setHeader('Content-Type', 'application/json')
-        proxyReq.setHeader('Content-Length', body.length)
+        proxyReq.removeHeader('Content-Length')
         proxyReq.write(body)
     },
     onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, _, res) => {
